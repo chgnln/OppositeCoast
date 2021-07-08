@@ -17,10 +17,10 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
-    private var infoView: TextView? = null
+    private lateinit var infoView: TextView
     private var map: GoogleMap? = null
     private var locationClient: FusedLocationProviderClient? = null
-    private var request: LocationRequest? = null
+    private lateinit var request: LocationRequest
     private var callback: LocationCallback? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,20 +34,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         locationClient = LocationServices.getFusedLocationProviderClient(this)
         request = LocationRequest.create()
-        request.setInterval(10000L)
-        request.setFastestInterval(5000L)
-        request.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
+        request.interval = 10000L
+        request.fastestInterval = 5000L
+        request.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
         callback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 Log.d(TAG, "onLocationResult")
                 val location = locationResult.lastLocation
                 val ll = LatLng(location.latitude, location.longitude)
-                infoView.setText(getString(R.string.latlng_format, ll.latitude, ll.longitude))
+                infoView.text = getString(R.string.latlng_format, ll.latitude, ll.longitude)
+                val map = map
                 if (map == null) {
                     Log.d(TAG, "onLocationResult: map == null")
                     return
                 }
-                map!!.animateCamera(CameraUpdateFactory.newLatLng(ll))
+                map.animateCamera(CameraUpdateFactory.newLatLng(ll))
             }
         }
     }
